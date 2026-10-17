@@ -1,0 +1,29 @@
+# Free web service only. No paid worker or managed database is provisioned.
+services:
+  - type: web
+    name: northstar-marketing-intelligence
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start:hosted
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOSTED_WORKERS
+        value: "false"
+      - key: MER_CHANNELS
+        value: meta
+      - key: SYNC_INTERVAL_SECONDS
+        value: "60"
+      - key: DATABASE_URL
+        sync: false
+      - key: TOKEN_ENCRYPTION_KEY
+        sync: false
+      - key: TOKEN_ENCRYPTION_KEY_ID
+        sync: false
+      - key: APP_ORIGIN
+        sync: false
+      - key: APP_URL
+        sync: false

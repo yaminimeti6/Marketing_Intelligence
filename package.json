@@ -20,7 +20,8 @@
     "worker:rules": "node --experimental-strip-types scripts/rules-worker.ts",
     "setup:check": "node --experimental-strip-types scripts/check-setup.mjs",
     "email:check": "node --env-file=.env --experimental-strip-types scripts/check-email.mjs",
-    "shopify:reconcile": "node --experimental-strip-types scripts/check-shopify-reconciliation.ts"
+    "shopify:reconcile": "node --experimental-strip-types scripts/check-shopify-reconciliation.ts",
+    "start:hosted": "node scripts/start-hosted.mjs"
   },
   "dependencies": {
     "@shopify/shopify-api": "^15.0.1",
@@ -43,5 +44,8 @@
     "tailwindcss": "^4.1.0",
     "typescript": "^5.9.0"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  }
 }
