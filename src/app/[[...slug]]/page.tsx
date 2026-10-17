@@ -3,6 +3,7 @@ import {loadSyncHealth} from '@/server/sync-health';
 import {loadConnectionSecurity} from '@/server/connection-security';
 import {loadAnalytics} from '@/server/analytics';
 import { notFound } from 'next/navigation';
+import { connection } from 'next/server';
 import { loadShopifyReport } from '@/server/shopify-report';
 import {loadCombinedOverview} from '@/server/combined-overview';
 import Foundation from '@/components/foundation';
@@ -15,6 +16,9 @@ import { reportLibrary } from '@/server/reports';
 import { loadTeamSettings } from '@/server/team';
 const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts'];
 export default async function Page({ params,searchParams }: { params: Promise<{ slug?: string[] }>;searchParams:Promise<Record<string,string|string[]|undefined>> }) {
+  // Hosting secrets may exist only at runtime. Never prerender the setup branch
+  // while building without DATABASE_URL and then serve it to signed-in users.
+  await connection();
   const { slug } = await params;
   if (slug && (slug.length !== 1 || !routes.includes(slug[0]))) notFound();
   const session = databaseConfigured() ? await requireSession() : null;
