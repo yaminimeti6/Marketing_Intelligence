@@ -1,0 +1,8 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { getRows, getTrend, rangeFor, previousRange, sumRows, ratio, csvCell, makeCsv } from '../src/lib/data.ts';
+test('inclusive dates and previous equal period do not overlap',()=>{assert.deepEqual(rangeFor(7),{start:'2026-10-09',end:'2026-10-15'});assert.deepEqual(previousRange('2026-10-09','2026-10-15'),{start:'2026-10-02',end:'2026-10-08'});});
+test('filters intersect consistently and preserve source isolation',()=>{const rows=getRows('2026-10-09','2026-10-15','Meta','creative','Paused');assert.equal(rows.length,1);assert.equal(rows[0].platform,'Meta');assert.equal(rows[0].daily.length,7);assert.equal(getRows('2026-10-09','2026-10-15','unsupported','creative','Paused').length,0);});
+test('trend totals reconcile exactly with campaign totals within currency precision',()=>{const r=getRows('2026-09-16','2026-10-15');const totals=sumRows(r);const trend=getTrend(r);assert.ok(Math.abs(trend.reduce((a,d)=>a+d.spend,0)-totals.spend)<0.001);assert.ok(Math.abs(trend.reduce((a,d)=>a+d.value,0)-totals.value)<0.001);assert.equal(trend.length,30);});
+test('ratios and missing data avoid invented zeros',()=>{assert.equal(ratio(10,0),null);assert.equal(ratio(0,10),0);assert.equal(getRows('2026-10-15','2026-10-01').length,0);assert.equal(getRows('bad','date').length,0);});
+test('CSV labels demo data, escapes quotes, and neutralizes spreadsheet formulas',()=>{assert.equal(csvCell('=1+1'),'"\'=1+1"');assert.equal(csvCell('a"b'),'"a""b"');const csv=makeCsv(getRows('2026-10-15','2026-10-15','Meta'),'USD');assert.match(csv,/DEMO DATA/);assert.match(csv,/Meta/);assert.doesNotMatch(csv,/Google/);});
