@@ -18,7 +18,9 @@ const interval=Number(env.SYNC_INTERVAL_SECONDS||60);
 report('Import scheduling interval',Number.isInteger(interval)&&interval>=60&&interval<=86400,'Runner must be running; this does not inspect worker processes');
 if(!Number.isInteger(interval)||interval<60||interval>86400)failures++;
 const email=emailConfiguration(env);
-report('Invitation email configuration',!!email,email?.from==='onboarding@resend.dev'?'Testing sender only; other recipients need a verified domain':email?'Format valid; provider and DNS not checked':'See docs/email-delivery.md');
+report('Invitation and scheduled-report email configuration',!!email,email?.from==='onboarding@resend.dev'?'Testing sender only; other recipients need a verified domain':email?'Format valid; provider and DNS not checked':'See docs/email-delivery.md');
+const reportsUser=env.REPORTS_WORKER_USER_ID||env.META_WORKER_USER_ID||env.SHOPIFY_WORKER_USER_ID;
+report('Scheduled reports worker identity',!!reportsUser&&/^[a-f0-9-]{36}$/i.test(reportsUser),'Requires an active external runner; worker process and delivery are not inspected');
 const callbacks=['META_REDIRECT_URI','SHOPIFY_REDIRECT_URI'].filter(present);
 try{const origin=new URL(env.APP_URL||env.APP_ORIGIN).origin;const mismatch=callbacks.filter(name=>{try{return new URL(env[name]).origin!==origin;}catch{return true;}});report('App and OAuth callback origins',!mismatch.length,mismatch.length?'Review: '+mismatch.join(', '):'Configured origins match');if(mismatch.length)failures++;}
 catch{report('App origin',false,'Set APP_URL or APP_ORIGIN to the current app origin');failures++;}

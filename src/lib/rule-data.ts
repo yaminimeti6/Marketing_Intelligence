@@ -12,7 +12,7 @@ export async function ruleAccounts(c:PoolClient):Promise<AnalyticsAccount[]>{
  }return result;
 }
 // Used inside a repeatable-read tenant transaction by both web actions and the worker.
-export async function ruleAnalytics(c:PoolClient,rule:RuleDefinition,now=new Date()):Promise<AnalyticsData>{
+export async function ruleAnalytics(c:PoolClient,rule:Pick<RuleDefinition,'scope'|'days'|'provider'|'account'>,now=new Date()):Promise<AnalyticsData>{
  const today=new Intl.DateTimeFormat('en-CA',{timeZone:rule.scope.split('|')[1],year:'numeric',month:'2-digit',day:'2-digit'}).format(now),start=shiftDay(today,-rule.days),end=shiftDay(today,-1);
  const data:AnalyticsData={today,accounts:await ruleAccounts(c),facts:[],entities:[],jobs:[],errors:[]};
  for(const provider of ['meta'] as const){

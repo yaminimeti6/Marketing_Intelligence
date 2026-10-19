@@ -21,7 +21,8 @@
     "setup:check": "node --experimental-strip-types scripts/check-setup.mjs",
     "email:check": "node --env-file=.env --experimental-strip-types scripts/check-email.mjs",
     "shopify:reconcile": "node --experimental-strip-types scripts/check-shopify-reconciliation.ts",
-    "start:hosted": "node scripts/start-hosted.mjs"
+    "start:hosted": "node scripts/start-hosted.mjs",
+    "worker:reports": "node --experimental-strip-types scripts/reports-worker.ts"
   },
   "dependencies": {
     "@shopify/shopify-api": "^15.0.1",

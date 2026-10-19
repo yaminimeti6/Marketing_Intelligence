@@ -20,7 +20,7 @@ Campaign-action increment: `/ad-manager` now supports paused campaign containers
 | --- | --- |
 | Dashboard, Ads Dashboard, Summary Dashboard, Marketing Dashboard, Analytics Dashboards | Implemented using imported Meta and Shopify data; coverage and currency/timezone guards apply. |
 | Multi Ad Account | Meta account discovery, selection and compatible reporting scopes implemented. |
-| Advanced Reporting, Automated Reporting, One-Click Reports | Filters, saved report configurations, CSV and browser printing implemented. Automatic email/PDF scheduling and public share links remain pending. |
+| Advanced Reporting, Automated Reporting, One-Click Reports | Filters, saved report configurations, CSV and browser printing implemented. Scheduled Meta campaign CSV snapshots and member email notifications are implemented; see [Scheduled Reports](scheduled-reports.md). An active external worker and configured verified sender are required. Scheduled PDF and public share links remain pending. |
 | Team Management | Roles, invitations, memberships, audit and workspace settings implemented. Email delivery requires verified sender. |
 | Alerts & Notifications, Campaign Automation, Custom Automation | Rule evaluation, dry runs, cooldown and in-app alerts implemented. Ad mutations and external notifications remain pending. |
 | Revenue Tracking, Shopify Integration, Sales Analytics, Ad Performance, ROAS Analysis, Product Analytics | Imported commerce, product analysis, Shopify Net Sales and guarded MER implemented. Financial reconciliation with representative paid/refunded orders remains a live acceptance requirement. |
