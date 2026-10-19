@@ -8,6 +8,8 @@ Update: the user subsequently supplied a private OpenAI API key and authorized C
 
 Profit increment: `/profit-planner` now provides a manual contribution/operating scenario calculator, margins, fixed-sales break-even metrics and local CSV. It does not import costs or certify actual profit. See [Profit Planner](profit-planner.md). AI remains unavailable without API credits.
 
+Image increment: `/ai-images` adds one-image generation, preview and JPEG download using the existing OpenAI key. Paid credits and model access remain required. Video was explicitly deferred after verifying OpenAI Videos/Sora retirement. See [AI Images](ai-images.md).
+
 ## Current implementation
 
 | Requested area | Actual status |
