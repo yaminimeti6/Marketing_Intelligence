@@ -143,3 +143,4 @@
 @media(max-width:1023px){.foundation .topbar .foundation-menu{min-width:44px;width:44px}.foundation .foundation-backdrop{cursor:default}}
 
 @media(min-width:360px) and (max-width:700px){.foundation .combined-overview>.shopify-metrics>.kpi:last-child:nth-child(odd){grid-column:1 / -1}}
+.creative-insights{display:grid;gap:24px;min-width:0}.creative-filters{display:flex;flex-wrap:wrap;gap:16px;align-items:end;margin:20px 0}.creative-filters label{display:grid;gap:8px;flex:1 1 180px;min-width:0}.creative-filters select,.creative-filters input,.creative-insights input{max-width:100%;min-height:44px}.creative-insights .table-scroll{overflow:auto;max-width:100%}.creative-insights table{width:100%;border-collapse:collapse}.creative-insights th,.creative-insights td{text-align:left;padding:14px;border-bottom:1px solid #e5eaf3}.creative-insights .panel{min-width:0}

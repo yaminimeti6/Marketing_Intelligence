@@ -14,7 +14,7 @@ import { shopifyStatus } from '@/server/shopify';
 import { loadMetaReport } from '@/server/meta-report';
 import { reportLibrary } from '@/server/reports';
 import { loadTeamSettings } from '@/server/team';
-const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts'];
+const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts','creative-insights'];
 export default async function Page({ params,searchParams }: { params: Promise<{ slug?: string[] }>;searchParams:Promise<Record<string,string|string[]|undefined>> }) {
   // Hosting secrets may exist only at runtime. Never prerender the setup branch
   // while building without DATABASE_URL and then serve it to signed-in users.
@@ -28,7 +28,7 @@ export default async function Page({ params,searchParams }: { params: Promise<{ 
   const raw=await searchParams;
   const query=Object.fromEntries(Object.entries(raw).map(([k,v])=>[k,typeof v==='string'?v:undefined]));
   const notice=query.meta;
-  const report=['meta','campaigns','reports'].includes(page)?await loadMetaReport(session,query):undefined;
+  const report=['meta','campaigns','reports','creative-insights'].includes(page)?await loadMetaReport(session,page==='creative-insights'?{...query,level:'ads',compare:'true'}:query):undefined;
   const library=['reports','analytics'].includes(page)?await reportLibrary(session):undefined;
   const team=page==='settings'?await loadTeamSettings(session):undefined;
   const shopifyReport=page==='shopify'?await loadShopifyReport(session,query):undefined;
