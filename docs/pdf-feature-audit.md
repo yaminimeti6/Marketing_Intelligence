@@ -1,3 +1,5 @@
+> Current scope (19 October 2026): This file retains historical audit entries. Use the [updated feature scope and readiness audit](expanded-feature-scope.md) for current implementation, remaining work and hosted setup gaps.
+
 > Responsive UI update (17 October 2026): Production tablet navigation, Settings spacing, Combined filters/KPI grid, checkbox alignment and touch controls were improved. See [responsive UI review](ui-responsive-review.md) for screens, widths and verification scope.
 
 > Scope update (17 October 2026): At the user's request, Google Ads has been removed from application UI, OAuth routes, workers, configuration and reporting/rules. Only Meta Ads and Shopify are active integrations. Historical Google migrations remain intact for database upgrade compatibility; earlier Google requirements below describe the original PDF, not current requested scope.
