@@ -10,6 +10,8 @@ Profit increment: `/profit-planner` now provides a manual contribution/operating
 
 Image increment: `/ai-images` adds one-image generation, preview and JPEG download using the existing OpenAI key. Paid credits and model access remain required. Video was explicitly deferred after verifying OpenAI Videos/Sora retirement. See [AI Images](ai-images.md).
 
+Measurement increment: consent-based pseudonymous receiver, observed journeys, order-count first/last/linear attribution, first-observed purchase cohorts and registered randomized storefront headline/landing experiments are implemented. Shopify pixel/theme installation and representative live acceptance remain pending. This does not complete Meta-side creative experiments, verified customer identity, financial revenue attribution or full-history cohorts. See [measurement setup and boundaries](journeys-experiments.md).
+
 ## Current implementation
 
 | Requested area | Actual status |

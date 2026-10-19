@@ -1,3 +1,5 @@
+import {loadExperiments} from '@/server/experiments';
+import {loadJourneyReport} from '@/server/journey-report';
 import {loadRules} from '@/server/rules';
 import {loadSyncHealth} from '@/server/sync-health';
 import {loadConnectionSecurity} from '@/server/connection-security';
@@ -14,7 +16,7 @@ import { shopifyStatus } from '@/server/shopify';
 import { loadMetaReport } from '@/server/meta-report';
 import { reportLibrary } from '@/server/reports';
 import { loadTeamSettings } from '@/server/team';
-const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts','creative-insights','ai','profit-planner','ai-images'];
+const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts','creative-insights','ai','profit-planner','ai-images','measurement','experiments'];
 export default async function Page({ params,searchParams }: { params: Promise<{ slug?: string[] }>;searchParams:Promise<Record<string,string|string[]|undefined>> }) {
   // Hosting secrets may exist only at runtime. Never prerender the setup branch
   // while building without DATABASE_URL and then serve it to signed-in users.
@@ -28,6 +30,8 @@ export default async function Page({ params,searchParams }: { params: Promise<{ 
   const raw=await searchParams;
   const query=Object.fromEntries(Object.entries(raw).map(([k,v])=>[k,typeof v==='string'?v:undefined]));
   const notice=query.meta;
+  const journeys=page==='measurement'?await loadJourneyReport(session):undefined;
+  const experiments=page==='experiments'?await loadExperiments(session):undefined;
   const report=['meta','campaigns','reports','creative-insights'].includes(page)?await loadMetaReport(session,page==='creative-insights'?{...query,level:'ads',compare:'true'}:query):undefined;
   const library=['reports','analytics'].includes(page)?await reportLibrary(session):undefined;
   const team=page==='settings'?await loadTeamSettings(session):undefined;
@@ -38,5 +42,5 @@ export default async function Page({ params,searchParams }: { params: Promise<{ 
   if(['integrations','onboarding'].includes(page))try{sourceHealth=await loadSyncHealth(session);}catch{}
   const rulesPage=page==='alerts'?await loadRules(session):undefined;
   const analyticsData=page==='analytics'?await loadAnalytics(session,query):undefined;
-  return <Foundation rulesPage={rulesPage} sourceHealth={sourceHealth} connectionSecurity={connectionSecurity} connectionNotice={query.connection_notice} analyticsData={analyticsData} analyticsParams={query} combinedReport={combinedReport} shopifyReport={shopifyReport} teamSettings={team} teamNotice={query.team_notice} reportLibrary={library} libraryNotice={query.report_notice} shopifyStatus={shopify} shopifyNotice={query.shopify} report={report} reportNotice={query.notice} page={page} meta={integration} metaNotice={notice} session={session ? {name:session.name,workspace:session.workspace,role:session.role}:null} />;
+  return <Foundation experiments={experiments} journeys={journeys} rulesPage={rulesPage} sourceHealth={sourceHealth} connectionSecurity={connectionSecurity} connectionNotice={query.connection_notice} analyticsData={analyticsData} analyticsParams={query} combinedReport={combinedReport} shopifyReport={shopifyReport} teamSettings={team} teamNotice={query.team_notice} reportLibrary={library} libraryNotice={query.report_notice} shopifyStatus={shopify} shopifyNotice={query.shopify} report={report} reportNotice={query.notice} page={page} meta={integration} metaNotice={notice} session={session ? {name:session.name,workspace:session.workspace,role:session.role}:null} />;
 }

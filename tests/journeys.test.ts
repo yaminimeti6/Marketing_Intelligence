@@ -1,0 +1,36 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {runInNewContext} from 'node:vm';
+import {randomUUID} from 'node:crypto';
+import {PGlite} from '@electric-sql/pglite';
+import {parseJourney,journeyPixelCode} from '../src/lib/journey-pixel.ts';
+import {journeyReport,type JourneyEvent} from '../src/lib/journey-report.ts';
+const key='a'.repeat(43),secret=Buffer.alloc(32,1).toString('base64');
+const payload=()=>({key,id:'event-1',visitor:'browser-1',customer:null,name:'page_viewed',channel:'meta',order:null,timestamp:new Date().toISOString(),analytics:true,marketing:true});
+test('journey ingestion requires both permissions and hashes identities separately per source',()=>{
+ const x=parseJourney(payload(),secret);assert.equal(x.visitorHash.length,64);assert.ok(!JSON.stringify(x).includes('browser-1'));assert.notEqual(x.visitorHash,parseJourney({...payload(),key:'b'.repeat(43)},secret).visitorHash);
+ for(const extra of [{analytics:false},{marketing:false},{email:'x@example.test'},{visitor:'private@example.test'},{order:'123'},{timestamp:'2020-01-01'}])assert.throws(()=>parseJourney({...payload(),...extra},secret));
+});
+test('generated journey pixel stops after consent withdrawal and does not transmit raw URLs or customer names',()=>{
+ const handlers:Record<string,(x:unknown)=>void>={},sent:Record<string,unknown>[]=[];let consent:(x:unknown)=>void=()=>{};
+ runInNewContext(journeyPixelCode('https://example.test',key),{URL,init:{customerPrivacy:{analyticsProcessingAllowed:true,marketingAllowed:false}},api:{customerPrivacy:{subscribe:(_n:string,cb:typeof consent)=>consent=cb}},analytics:{subscribe:(n:string,cb:(x:unknown)=>void)=>handlers[n]=cb},fetch:async(_u:string,init:{body:string})=>{sent.push(JSON.parse(init.body));}});
+ const event={id:'1',clientId:'browser-1',name:'page_viewed',timestamp:new Date().toISOString(),context:{document:{location:{href:'https://shop.test/?utm_source=facebook&email=private',hostname:'shop.test'},referrer:''}}};handlers.page_viewed(event);assert.equal(sent.length,0);consent({customerPrivacy:{analyticsProcessingAllowed:true,marketingAllowed:true}});handlers.page_viewed(event);assert.equal(sent[0].channel,'meta');assert.ok(!JSON.stringify(sent).includes('private'));consent({customerPrivacy:{analyticsProcessingAllowed:false,marketingAllowed:true}});handlers.page_viewed(event);assert.equal(sent.length,1);
+});
+test('attribution reconciles unmatched orders, excludes future touches, and cohorts distinguish immature months',()=>{
+ const event=(name:string,time:string,channel:string,order:string|null=null,customer:string|null=null):JourneyEvent=>({source:'s',visitor:'v',name,time,channel,order,customer});
+ const rows=[event('page_viewed','2026-08-01T00:00:00Z','meta'),event('page_viewed','2026-08-02T00:00:00Z','organic'),event('checkout_completed','2026-08-03T00:00:00Z','direct','o1','c'),event('page_viewed','2026-08-04T00:00:00Z','other'),event('checkout_completed','2026-09-01T00:00:00Z','direct','o2','c')];
+ const result=journeyReport(rows,[{source:'s',id:'o1',time:rows[2].time},{source:'s',id:'o2',time:rows[4].time},{source:'s',id:'unknown',time:rows[4].time}],'2026-10-19T00:00:00Z');assert.equal(result.matched,2);assert.equal(result.unmatched,1);for(const k of ['first','last','linear'] as const)assert.ok(Math.abs(result.channels.reduce((n,c)=>n+c[k],0)-3)<1e-9);assert.equal(result.channels.find(c=>c.channel==='meta')?.first,1);assert.deepEqual(result.cohorts[0].active,[1,1,0]);assert.deepEqual(result.cohorts[0].mature,[true,true,false]);
+});
+test('journey database isolates reads, restores caller context and requires measurement opt-in',async()=>{
+ const db=new PGlite();try{
+  await db.exec('CREATE ROLE northstar_app NOSUPERUSER NOBYPASSRLS');
+  for(const name of ['001_foundation','002_meta_connection','003_meta_range_insights','004_shopify_connection','008_shopify_customer_events','014_event_retention','017_journey_measurement','018_storefront_experiments'])await db.exec(await readFile(new URL('../db/migrations/'+name+'.sql',import.meta.url),'utf8'));
+  const ws=randomUUID(),other=randomUUID(),user=randomUUID(),connection=randomUUID();await db.query("INSERT INTO workspaces(id,name) VALUES($1,'Journey'),($2,'Other')",[ws,other]);await db.query("INSERT INTO users(id,email,name,password_hash) VALUES($1,'journey@example.test','Owner','unused')",[user]);await db.query("INSERT INTO memberships(workspace_id,user_id,role) VALUES($1,$2,'owner')",[ws,user]);await db.query("INSERT INTO provider_connections(workspace_id,id,provider,external_id,status) VALUES($1,$2,'shopify','journey.myshopify.com','connected')",[ws,connection]);await db.query("INSERT INTO shopify_stores(workspace_id,connection_id,shop_domain,name,currency,timezone_name) VALUES($1,$2,'journey.myshopify.com','Journey','INR','UTC')",[ws,connection]);
+  const x=parseJourney(payload(),secret);await db.query('INSERT INTO shopify_pixel_sources(workspace_id,connection_id,key_hash,created_by) VALUES($1,$2,$3,$4)',[ws,connection,x.keyHash,user]);await db.exec('SET ROLE northstar_app');await db.query("SELECT set_config('app.workspace_id',$1,false),set_config('app.user_id',$2,false)",[other,user]);
+  const receive=async()=> (await db.query<{result:string}>('SELECT receive_journey($1,$2,$3,$4,$5,$6,$7,$8) AS result',[x.keyHash,x.eventHash,x.visitorHash,null,x.name,x.channel,null,x.timestamp])).rows[0].result;
+  assert.equal(await receive(),'unknown');await db.query("SELECT set_config('app.workspace_id',$1,false)",[ws]);await db.query('UPDATE shopify_pixel_sources SET measurement_enabled=true');await db.query("SELECT set_config('app.workspace_id',$1,false)",[other]);assert.equal(await receive(),'accepted');assert.equal(await receive(),'duplicate');assert.equal((await db.query('SELECT * FROM journey_events')).rows.length,0);assert.equal((await db.query<{value:string}>("SELECT current_setting('app.workspace_id') AS value")).rows[0].value,other);await assert.rejects(()=>db.query('DELETE FROM journey_events'));await db.query("SELECT set_config('app.workspace_id',$1,false)",[ws]);assert.equal((await db.query('SELECT * FROM journey_events')).rows.length,1);
+  const source=(await db.query<{id:string}>('SELECT id FROM shopify_pixel_sources')).rows[0].id;const experiment=(await db.query<{id:string}>("INSERT INTO storefront_experiments(workspace_id,source_id,name,kind,entry_path,variant_a,variant_b,status,started_at,ends_at) VALUES($1,$2,'Fixture','headline','/pages/test','A','B','running',now()-interval '1 hour',now()+interval '14 days') RETURNING id",[ws,source])).rows[0].id;
+  const expose=async(variant='A')=>(await db.query<{result:string}>('SELECT receive_exposure($1,$2,$3,$4,now()) AS result',[x.keyHash,experiment,x.visitorHash,variant])).rows[0].result;assert.equal(await expose(),'accepted');assert.equal(await expose(),'duplicate');await db.query("SELECT set_config('app.workspace_id',$1,false)",[other]);assert.equal((await db.query('SELECT * FROM experiment_exposures')).rows.length,0);await db.query("SELECT set_config('app.workspace_id',$1,false)",[ws]);await db.query("UPDATE storefront_experiments SET status='stopped'");assert.equal(await expose('B'),'unknown');
+ }finally{await db.close();}
+});
