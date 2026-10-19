@@ -14,7 +14,7 @@ import { shopifyStatus } from '@/server/shopify';
 import { loadMetaReport } from '@/server/meta-report';
 import { reportLibrary } from '@/server/reports';
 import { loadTeamSettings } from '@/server/team';
-const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts','creative-insights'];
+const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts','creative-insights','ai'];
 export default async function Page({ params,searchParams }: { params: Promise<{ slug?: string[] }>;searchParams:Promise<Record<string,string|string[]|undefined>> }) {
   // Hosting secrets may exist only at runtime. Never prerender the setup branch
   // while building without DATABASE_URL and then serve it to signed-in users.

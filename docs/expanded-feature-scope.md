@@ -4,6 +4,8 @@ Validation for the Creative Insights increment: production build and TypeScript 
 
 The user requested the supplied FabFunnel, Madgicx, Triple Whale and Northbeam feature lists. These are user requirements, not independently verified vendor claims. Existing Meta and Shopify scope remains; Google Ads is not restored. The user has no AI service credentials and requested data-backed features first.
 
+Update: the user subsequently supplied a private OpenAI API key and authorized Co-Pilot and Copywriter integration. `/ai` now provides aggregate Meta report questions and ad-copy drafts in English, Gujarati and Hindi. Other AI/video/image features in the outstanding matrix remain pending. See [AI Assistant setup and boundaries](ai-assistant.md).
+
 ## Current implementation
 
 | Requested area | Actual status |
