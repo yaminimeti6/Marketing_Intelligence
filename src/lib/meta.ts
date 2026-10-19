@@ -22,14 +22,14 @@ export class MetaError extends Error {
     this.retryable = kind === 'rate_limited' || kind === 'unavailable';
   }
 }
-export function oauthUrl(config: MetaConfig, state: string) {
+export function oauthUrl(config: MetaConfig, state: string,management=false) {
   const url = new URL(`https://www.facebook.com/${config.version}/dialog/oauth`);
   url.searchParams.set('client_id', config.appId);
   url.searchParams.set('redirect_uri', config.redirectUri);
   url.searchParams.set('response_type', 'code');
   url.searchParams.set('state', state);
   if (config.loginConfigId) url.searchParams.set('config_id', config.loginConfigId);
-  else url.searchParams.set('scope', 'ads_read');
+  else url.searchParams.set('scope', management?'ads_read,ads_management':'ads_read');
   return url.toString();
 }
 

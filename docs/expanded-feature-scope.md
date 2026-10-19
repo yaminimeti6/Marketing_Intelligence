@@ -12,6 +12,8 @@ Image increment: `/ai-images` adds one-image generation, preview and JPEG downlo
 
 Measurement increment: consent-based pseudonymous receiver, observed journeys, order-count first/last/linear attribution, first-observed purchase cohorts and registered randomized storefront headline/landing experiments are implemented. Shopify pixel/theme installation and representative live acceptance remain pending. This does not complete Meta-side creative experiments, verified customer identity, financial revenue attribution or full-history cohorts. See [measurement setup and boundaries](journeys-experiments.md).
 
+Campaign-action increment: `/ad-manager` now supports paused campaign containers and reviewed bulk ACTIVE/PAUSED/daily-budget operations on up to five imported objects. Execution defaults off, needs ads_management and exact user confirmation, and was not live-tested. Full new ad-set/creative/ad launching and automatic uncertain-outcome reconciliation remain pending. See [Campaign Actions](campaign-actions.md).
+
 ## Current implementation
 
 | Requested area | Actual status |
