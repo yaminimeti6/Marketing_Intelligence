@@ -42,7 +42,7 @@ Campaign-action increment: `/ad-manager` now supports paused campaign containers
 | Cloud Tracking | Consent-aware server-side conversion delivery, provider credentials, deduplication and verified event matching. Aggregate pixel ingestion is not Meta CAPI. |
 | Multi-Touch Attribution, Customer Journey, Customer Journey Analysis, Revenue Attribution | Consent and retention model, observed touchpoint collection, identity strategy, order linkage, model definitions and reconciled unattributed bucket. Current aggregates cannot reconstruct journeys. |
 | Customer Segmentation, Cohort Analysis | Authorized customer/order history, identity minimization, cohort definitions, retention and LTV coverage. Current store has no imported orders. |
-| Custom Dashboard | Persistent tenant-scoped widget configuration, metric registry and compatible scope checks. |
+| Custom Dashboard | Implemented: saved workspace layouts, registry-based KPI/trend/table widgets, ordering, widths, source scopes, revision conflict checks and responsive layout. See [Custom Dashboard](custom-dashboard.md). |
 | Data Warehouse | Existing PostgreSQL is application storage; external warehouse connectors, lineage and governed exports remain pending. |
 | Marketing Mix Modeling, Media Mix Modeling, Incrementality Measurement, Budget Allocation Insights | Sufficient historical channel/outcome data, controls, holdouts or experiments, uncertainty estimates and validation. Single-channel sparse data cannot support causal claims. |
 | Northbeam Apex | Vendor-specific proprietary product; equivalent integrations need their own authorized provider implementations. |
