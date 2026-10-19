@@ -6,6 +6,8 @@ The user requested the supplied FabFunnel, Madgicx, Triple Whale and Northbeam f
 
 Update: the user subsequently supplied a private OpenAI API key and authorized Co-Pilot and Copywriter integration. `/ai` now provides aggregate Meta report questions and ad-copy drafts in English, Gujarati and Hindi. Other AI/video/image features in the outstanding matrix remain pending. See [AI Assistant setup and boundaries](ai-assistant.md).
 
+Profit increment: `/profit-planner` now provides a manual contribution/operating scenario calculator, margins, fixed-sales break-even metrics and local CSV. It does not import costs or certify actual profit. See [Profit Planner](profit-planner.md). AI remains unavailable without API credits.
+
 ## Current implementation
 
 | Requested area | Actual status |
