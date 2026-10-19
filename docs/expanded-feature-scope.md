@@ -2,7 +2,7 @@
 
 This is the current audit of the user's supplied feature requirements, based on repository implementation and read-only setup checks. Vendor feature lists are requirements supplied by the user, not independently verified vendor claims. Current marketing scope is Meta Ads plus Shopify; Google Ads was explicitly removed.
 
-The latest implementation verification completed 127 unit/database tests, production build and responsive checks at 375/768/1440 pixels. Creative Library also passed real temporary upload/download, private media, archive/restore, WebM playback and mocked AI-save checks; temporary assets were deleted. These checks do not establish live provider delivery, installed storefront tracking or financially representative acceptance.
+The latest implementation verification completed 134 unit/database tests, production build and responsive checks at 375/768/1440 pixels. Creative Library also passed real temporary upload/download, private media, archive/restore, WebM playback and mocked AI-save checks; temporary assets were deleted. These checks do not establish live provider delivery, installed storefront tracking or financially representative acceptance.
 
 ## Implemented capabilities
 
@@ -22,17 +22,21 @@ The latest implementation verification completed 127 unit/database tests, produc
 | AI Co-Pilot and Copywriter | Aggregate Meta questions and reviewed copy drafts in English, Gujarati and Hindi | Requires OpenAI API credits/model access. No automatic publishing or actions. |
 | AI image generation | Image generation, JPEG download and explicit save to Creative Library | Requires paid API credits/model access; no video-generation provider configured. |
 | First-party pixel and journeys | Aggregate browser events plus opt-in consent-based pseudonymous page/checkout events and observed journeys | Pixel installation and real event delivery remain unverified. No automatic cross-device identity. |
-| Attribution and cohorts | Order-count first/last/linear attribution, unmatched-order bucket and first-retained-observed purchase cohorts | Not financial revenue attribution, verified acquisition cohorts, full-history LTV or causal impact. |
+| Attribution and cohorts | Order-count first/last/linear attribution, unmatched-order bucket and first-retained-observed purchase cohorts | Observed revenue allocation is now available separately; verified acquisition cohorts, full-history LTV and causal impact remain unavailable. |
 | A/B experiments | Registered randomized storefront headline/CTA and same-store landing-path tests, assignment snippet, lifecycle and mature conversion intervals | Manual theme/pixel installation and real traffic needed. Meta-side experiments, automated significance/winner decisions and sequential stopping guarantees remain pending. See [Journeys and Experiments](journeys-experiments.md). |
-| Campaign Actions / bulk actions | Paused campaign containers; reviewed ACTIVE/PAUSED and daily-budget changes for up to five imported objects | Execution opt-in and ads_management required. No full ad-set/creative/ad launcher; unknown-outcome reconciliation remains manual. See [Campaign Actions](campaign-actions.md). |
+| Campaign Actions / bulk actions | Paused campaign containers; reviewed ACTIVE/PAUSED and daily-budget changes for up to five imported objects | Execution opt-in and ads_management required. The new image launcher adds ad-set/creative/ad creation; unknown-outcome reconciliation remains manual. See [Campaign Actions](campaign-actions.md). |
 
-## Still not implemented
+## Growth increment implemented
 
-- Full bulk campaign launch with targeting, ad sets, creative selection, ad creation and reviewed publication.
-- Funnel/landing-page builder and publishing. Existing experiments switch supplied text/paths; they do not build landing pages.
+See [Growth workspace and layout refresh](growth-suite.md) for the campaign launcher, text funnel publishing, manual competitor research, sampled-frame Video Sage, consent-aware CAPI, observed revenue attribution/LTV and responsive grouped navigation. These capabilities have explicit setup and measurement boundaries.
+
+## Remaining enterprise capabilities
+
+- Arbitrary-objective, multi-account, video/carousel campaign launch. The image launcher now builds a complete paused campaign/ad-set/ad bundle with separate publication review.
+- Drag-and-drop funnel editing and conversion tracking on hosted funnel pages. Text landing-page publishing is implemented.
 - Competitor/industry ad research backed by an authorized dataset.
-- AI video generation and Video Sage/video analysis; autonomous AI Marketer actions.
-- Consent-aware Meta Conversions API delivery, server/browser event deduplication and verified event matching. Pixel ingestion is not CAPI.
+- AI video generation and autonomous AI Marketer actions. Sampled-frame Video Sage is implemented.
+- Live acceptance of CAPI delivery, external sender deduplication and event match quality. Disabled-by-default CAPI delivery is implemented.
 - Verified revenue attribution, customer segmentation, full-history retention/LTV and cross-device customer journeys.
 - Automatic historical SKU cost valuation, supplier/settlement imports and full accounting reconciliation.
 - External data-warehouse connectors and governed warehouse exports.
@@ -41,7 +45,7 @@ The latest implementation verification completed 127 unit/database tests, produc
 
 ## Read-only readiness check - 19 October 2026
 
-Local and hosted-target setup checks passed: Meta/Shopify configuration presence, callback-origin consistency, restricted database role and all 23 migrations. Configuration presence does not authenticate provider credentials or establish live synchronization.
+Local and hosted-target setup checks passed: Meta/Shopify configuration presence, callback-origin consistency, restricted database role and all 26 migrations. Configuration presence does not authenticate provider credentials or establish live synchronization.
 
 Hosted workspace observations from Neon at audit time:
 

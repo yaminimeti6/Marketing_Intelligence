@@ -1,3 +1,7 @@
+import {loadLauncher} from '@/server/campaign-launcher';
+import {loadCapi} from '@/server/meta-capi';
+import {loadGrowth} from '@/server/growth-documents';
+import {loadRevenueAttribution} from '@/server/revenue-attribution';
 import {loadCreativeLibrary} from '@/server/creative-library';
 import {loadCustomDashboard} from '@/server/custom-dashboard';
 import {loadScheduledReports} from '@/server/scheduled-reports';
@@ -21,7 +25,7 @@ import { shopifyStatus } from '@/server/shopify';
 import { loadMetaReport } from '@/server/meta-report';
 import { reportLibrary } from '@/server/reports';
 import { loadTeamSettings } from '@/server/team';
-const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts','creative-insights','ai','profit-planner','ai-images','measurement','experiments','ad-manager','profit-analytics','scheduled-reports','custom-dashboard','creative-library'];
+const routes = ['meta', 'overview', 'analytics', 'campaigns', 'shopify', 'attribution', 'reports', 'integrations', 'settings','onboarding','alerts','creative-insights','ai','profit-planner','ai-images','measurement','experiments','ad-manager','profit-analytics','scheduled-reports','custom-dashboard','creative-library','funnels','research','video-sage','revenue-attribution','capi','launcher'];
 export default async function Page({ params,searchParams }: { params: Promise<{ slug?: string[] }>;searchParams:Promise<Record<string,string|string[]|undefined>> }) {
   // Hosting secrets may exist only at runtime. Never prerender the setup branch
   // while building without DATABASE_URL and then serve it to signed-in users.
@@ -35,6 +39,10 @@ export default async function Page({ params,searchParams }: { params: Promise<{ 
   const raw=await searchParams;
   const query=Object.fromEntries(Object.entries(raw).map(([k,v])=>[k,typeof v==='string'?v:undefined]));
   const notice=query.meta;
+  const launcher=page==='launcher'?await loadLauncher(session):undefined;
+  const capi=page==='capi'?await loadCapi(session):undefined;
+  const growth=page==='funnels'||page==='research'?await loadGrowth(session,page==='funnels'?'funnel':'research'):undefined;
+  const revenueAttribution=['revenue-attribution','attribution'].includes(page)?await loadRevenueAttribution(session,query.store):undefined;
   const creativeLibrary=page==='creative-library'?await loadCreativeLibrary(session):undefined;
   const customDashboard=page==='custom-dashboard'?await loadCustomDashboard(session,query.id):undefined;
   const scheduledReports=page==='scheduled-reports'?await loadScheduledReports(session,query.run):undefined;
@@ -52,5 +60,5 @@ export default async function Page({ params,searchParams }: { params: Promise<{ 
   if(['integrations','onboarding'].includes(page))try{sourceHealth=await loadSyncHealth(session);}catch{}
   const rulesPage=page==='alerts'?await loadRules(session):undefined;
   const analyticsData=page==='analytics'?await loadAnalytics(session,query):undefined;
-  return <Foundation creativeLibrary={creativeLibrary} customDashboard={customDashboard} scheduledReports={scheduledReports} scheduledRun={query.run} actualProfit={actualProfit} metaOperations={metaOperations} experiments={experiments} journeys={journeys} rulesPage={rulesPage} sourceHealth={sourceHealth} connectionSecurity={connectionSecurity} connectionNotice={query.connection_notice} analyticsData={analyticsData} analyticsParams={query} combinedReport={combinedReport} shopifyReport={shopifyReport} teamSettings={team} teamNotice={query.team_notice} reportLibrary={library} libraryNotice={query.report_notice} shopifyStatus={shopify} shopifyNotice={query.shopify} report={report} reportNotice={query.notice} page={page} meta={integration} metaNotice={notice} session={session ? {name:session.name,workspace:session.workspace,role:session.role}:null} />;
+  return <Foundation launcher={launcher} capi={capi} growth={growth} revenueAttribution={revenueAttribution} creativeLibrary={creativeLibrary} customDashboard={customDashboard} scheduledReports={scheduledReports} scheduledRun={query.run} actualProfit={actualProfit} metaOperations={metaOperations} experiments={experiments} journeys={journeys} rulesPage={rulesPage} sourceHealth={sourceHealth} connectionSecurity={connectionSecurity} connectionNotice={query.connection_notice} analyticsData={analyticsData} analyticsParams={query} combinedReport={combinedReport} shopifyReport={shopifyReport} teamSettings={team} teamNotice={query.team_notice} reportLibrary={library} libraryNotice={query.report_notice} shopifyStatus={shopify} shopifyNotice={query.shopify} report={report} reportNotice={query.notice} page={page} meta={integration} metaNotice={notice} session={session ? {name:session.name,workspace:session.workspace,role:session.role}:null} />;
 }
