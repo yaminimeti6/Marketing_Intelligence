@@ -35,7 +35,7 @@ Campaign-action increment: `/ad-manager` now supports paused campaign containers
 | --- | --- |
 | Bulk Campaign Launcher, Ads Manager 2.0, Bulk Actions | Advertising write scopes, draft validation, review, explicit publish confirmation, idempotency, provider errors, audit and rollback strategy. Existing integration is read-only. |
 | AI Creative Generator, AI Ad Generator, AI Copywriter, AI Co-Pilot, AI Marketer, Moby AI, Video Sage | AI provider configuration, quotas, secure server adapter, grounding and output review. No AI service configured. Rule-based signals are not labeled AI. |
-| Creative Library | Tenant-scoped asset storage/upload, validation, thumbnails, tags, deletion and provider mapping. Existing ad entity names are not a media library. |
+| Creative Library | Implemented: workspace image/video upload, private previews/downloads, thumbnails, tags/search, notes, archive/restore, confirmed deletion and AI image saving. Meta asset import and performance mapping remain pending. See [Creative Library](creative-library.md). |
 | Funnel Engine | Draft landing pages, publishing, domain/path ownership, consent and conversion instrumentation. |
 | Industry Insights | Authorized competitor/ad-library data source and search permissions; no competitor dataset imported. |
 | Profit Analytics | Dated SKU COGS, fees, shipping, tax treatment, refunds and currency validation. Net Sales minus ad spend is not net profit. |
