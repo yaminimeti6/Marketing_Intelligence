@@ -11,6 +11,7 @@ export async function signIn(form: FormData) {
   const password = String(form.get('password') ?? '');
   if (!email || email.length > 254 || !password || password.length > 256) redirect('/login?error=invalid');
   let authenticated = false;
+  let limited = false;
   try {
     const attempts = await db().query(`INSERT INTO login_attempts(identity_hash,attempts) VALUES($1,1)
       ON CONFLICT(identity_hash) DO UPDATE SET
@@ -24,13 +25,15 @@ export async function signIn(form: FormData) {
       const dummy = '0'.repeat(32) + ':' + '0'.repeat(128);
       const valid = verifyPassword(password, user?.password_hash ?? dummy);
       if (user && valid) {
+        await db().query('UPDATE login_attempts SET attempts=0 WHERE identity_hash=$1', [hashToken(email)]);
         const token = newToken();
         await db().query("INSERT INTO sessions(token_hash,user_id,workspace_id,expires_at) VALUES($1,$2,$3,now()+interval '8 hours')", [hashToken(token), user.id, user.workspace_id]);
         (await cookies()).set(sessionCookie, token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 8 * 60 * 60 });
         authenticated = true;
       }
-    }
+    } else { limited = true; }
   } catch { redirect('/login?error=unavailable'); }
+  if (limited) redirect('/login?error=limited');
   if (!authenticated) redirect('/login?error=invalid');
   redirect('/meta');
 }

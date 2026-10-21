@@ -15,8 +15,8 @@ export default function LoginForm({ configured }: { configured: boolean }) {
   const whitespace = password.length > 0 && password !== password.trim();
   const copiedLabel = password.startsWith('Password:');
   return <form action={signIn}>
-    <label>Email address<input type="email" name="email" autoComplete="username" required maxLength={254}/></label>
-    <label>Password<input type={visible ? 'text' : 'password'} name="password" autoComplete="current-password" required maxLength={256} value={password} onChange={event => setPassword(event.target.value)} aria-describedby={whitespace || copiedLabel ? 'password-copy-help' : undefined}/></label>
+    <label>Email address<input type="email" name="email" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} required maxLength={254}/></label>
+    <label>Password<input type={visible ? 'text' : 'password'} name="password" autoComplete="current-password" autoCapitalize="none" autoCorrect="off" spellCheck={false} required maxLength={256} value={password} onChange={event => setPassword(event.target.value)} aria-describedby={whitespace || copiedLabel ? 'password-copy-help' : undefined}/></label>
     <button className="text-button" type="button" aria-pressed={visible} onClick={() => setVisible(value => !value)}>{visible ? 'Hide password' : 'Show password'}</button>
     {(whitespace || copiedLabel) && <p id="password-copy-help" role="status" className="foundation-muted">{copiedLabel ? 'Copy only the password value, without the “Password:” label.' : 'There are spaces before or after the password. Check that they were not copied accidentally.'}</p>}
     <Submit configured={configured}/>
